@@ -10,7 +10,7 @@
     - [Install Dashboards the Old Way](#install-dashboards-the-old-way)
   	- [Alerting](#alerting)
   	- [Test Alerts](#test-alerts)
-    - [Add additional Datasources](#add-additional-datasources)
+    - [Add additional Datasources](#add-datasources-the-old-way)
   - [Security Considerations](#security-considerations)
   	- [Production Security](#production-security)
   - [Troubleshooting](#troubleshooting)
@@ -100,8 +100,10 @@ High load test alert - `docker run --rm -it busybox sh -c "while true; do :; don
 
 Let this run for a few minutes and you will notice the load alert appear. Then Ctrl+C to stop this container.
 
-### Add Additional Datasources
-Now we need to create the Prometheus Datasource in order to connect Grafana to Prometheus 
+### Add Datasources the Old Way
+
+If you need to add additional Datasources to the default:
+
 * Click the `Grafana` Menu at the top left corner (looks like a fireball)
 * Click `Data Sources`
 * Click the green button `Add Data Source`.
