@@ -56,7 +56,7 @@ View logs for a specific service
     $ docker service logs prom_<service_name>
 
 ## Add Datasources and Dashboards
-Grafana version 5.0.0 has introduced the concept of provisioning. This allows us to automate the process of adding Datasources & Dashboards. The `/grafana/provisioning/` directory contains the `datasources` and `dashboards` directories. These directories contain YAML files which allow us to specify which datasource or dashboards should be installed. 
+Grafana version 5.0.0 has introduced the concept of [provisioning](docs.grafana.org/administration/provisioning/). This allows us to automate the process of adding Datasources & Dashboards. The `/grafana/provisioning/` directory contains the `datasources` and `dashboards` directories. These directories contain YAML files which allow us to specify which datasource or dashboards should be installed. 
 
 If you would like to automate the installation of additional dashboards just copy the Dashboard `JSON` file to `/grafana/provisioning/dashboards` and it will be provisioned next time you stop and start Grafana.
 
