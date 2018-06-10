@@ -1,20 +1,30 @@
 version: '3.1'
 
-volumes:
-    prometheus_data: {}
-    grafana_data: {}
+#volumes:
+#    prometheus_data: {}
+#    grafana_data: {}
 
 networks:
   front-tier:
   back-tier:
 
 services:
+  redis:
+    image: redis
+    networks:
+      - back-tier
+  mariadb:
+     image: mariadb
+     environment:
+         - MYSQL_ROOT_PASSWORD=mariadb
+     networks:
+      - back-tier
 
   prometheus:
-    image: prom/prometheus:v2.1.0
+    image: prom/prometheus
     volumes:
       - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
+#      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -30,7 +40,8 @@ services:
     networks:
       - back-tier
     restart: always
-#    deploy:
+    deploy:
+       replicas: 2
 #      placement:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
@@ -92,7 +103,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - grafana_data:/var/lib/grafana
+#      - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
       - ./grafana/config.monitoring
@@ -100,4 +111,6 @@ services:
       - back-tier
       - front-tier
     restart: always
+    deploy:
+       replicas: 2
 
