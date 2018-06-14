@@ -13,7 +13,7 @@ services:
     image: redis
     networks:
       - back-tier
-  maridb:
+  mariadb:
      image: mariadb
      environment:
          - MYSQL_ROOT_PASSWORD=mariadb
