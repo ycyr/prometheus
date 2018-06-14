@@ -78,10 +78,20 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
+      - '-mesh.peer=alertmanager2:6783'
+  alertmanager2:
+    image: prom/alertmanager
+    ports:
+      - 9094:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    networks:
+      - back-tier
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+      - '-mesh.peer=alertmanager:6783'
   cadvisor:
     image: google/cadvisor
     volumes:
