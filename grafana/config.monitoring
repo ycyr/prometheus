@@ -2,7 +2,7 @@ GF_SECURITY_ADMIN_PASSWORD=foobar
 GF_USERS_ALLOW_SIGN_UP=false
 GF_SESSION_PROVIDER=mysql
 #GF_SESSION_PROVIDER_CONFIG=addr=redis:6379,pool_size=100,prefix=grafana
-GF_SESSION_PROVIDER_CONFIG=addr=root:mariadb@tcp(mariadb:3306)/grafana
+GF_SESSION_PROVIDER_CONFIG=root:mariadb@tcp(mariadb:3306)/grafana
 GF_DATABASE_TYPE=mysql
 GF_DATABASE_HOST=mariadb:3306
 GF_DATABASE_USER=root
