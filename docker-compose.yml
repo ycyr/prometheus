@@ -78,7 +78,7 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-      - '-mesh.peer=alertmanager2:6783'
+      - '--mesh.peer=alertmanager2:6783'
   alertmanager2:
     image: prom/alertmanager
     ports:
@@ -91,7 +91,7 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-      - '-mesh.peer=alertmanager:6783'
+      - '--mesh.peer=alertmanager:6783'
   cadvisor:
     image: google/cadvisor
     volumes:
