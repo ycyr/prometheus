@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.3'
 
 #volumes:
 #    prometheus_data: {}
@@ -8,11 +8,51 @@ networks:
   front-tier:
   back-tier:
 
+configs:
+  prometheus.yml:
+    file: ./prometheus/prometheus.yml
+  alert.rules:
+    file: ./prometheus/alert.rules
+  config.yml:
+    file: ./alertmanager/alert.rules
+  dashboard.yml:
+    file: ./grafana/provisioning/dashboards/dashboard.yml
+  docker-dashboard_rev5.json:
+    file: ./grafana/provisioning/dashboards/docker-dashboard_rev5.json
+  datasource.yml:
+    file: ./grafana/provisioning/datasources/datasource.yml
+
 services:
-  redis:
-    image: redis
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    configs:
+      - source: dashboard.yml
+        target: /etc/grafana/provisioning/dashboards/dashboard.yml
+        uid: '472'
+      - source: docker-dashboard_rev5.json
+        target: /etc/grafana/provisioning/dashboards/docker-dashboard_rev5.json
+        uid: '472'
+      - source: datasource.yml
+        target: /etc/grafana/provisioning/datasources/datasource.yml
+        uid: '472'
+ 
+#    volumes:
+#      - grafana_data:/var/lib/grafana
+#      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.monitoring
     networks:
       - back-tier
+      - front-tier
+    restart: always
+    deploy:
+       replicas: 2
+       
   mariadb:
      image: mariadb
      environment:
@@ -23,14 +63,19 @@ services:
 
   prometheus:
     image: prom/prometheus
-    volumes:
-      - ./prometheus/:/etc/prometheus/
+    configs:
+      - source: prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - source: alert.rules
+        target: /etc/prometheus/alert.rules
+#    volumes:
+#      - ./prometheus/:/etc/prometheus/
 #      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#      - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
       - 9090:9090
     links:
@@ -70,8 +115,11 @@ services:
     image: prom/alertmanager
     ports:
       - 9093:9093
-    volumes:
-      - ./alertmanager/:/etc/alertmanager/
+    configs:
+      - source: config.yml
+        target: /etc/alertmanager/config.yml
+#    volumes:
+#      - ./alertmanager/:/etc/alertmanager/
     networks:
       - back-tier
     restart: always
@@ -83,8 +131,11 @@ services:
     image: prom/alertmanager
     ports:
       - 9094:9093
-    volumes:
-      - ./alertmanager/:/etc/alertmanager/
+    configs:
+      - source: config.yml
+        target: /etc/alertmanager/config.yml
+#    volumes:
+#      - ./alertmanager/:/etc/alertmanager/
     networks:
       - back-tier
     restart: always
@@ -107,20 +158,3 @@ services:
     deploy:
       mode: global
 
-  grafana:
-    image: grafana/grafana
-    depends_on:
-      - prometheus
-    ports:
-      - 3000:3000
-    volumes:
-#      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
-    networks:
-      - back-tier
-      - front-tier
-    restart: always
-    deploy:
-       replicas: 2
