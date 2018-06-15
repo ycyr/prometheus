@@ -14,7 +14,7 @@ configs:
   alert.rules:
     file: ./prometheus/alert.rules
   config.yml:
-    file: ./alertmanager/alert.rules
+    file: ./alertmanager/config.yml
   dashboard.yml:
     file: ./grafana/provisioning/dashboards/dashboard.yml
   docker-dashboard_rev5.json:
