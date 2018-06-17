@@ -1,11 +1,8 @@
 version: '3.3'
 
-#volumes:
-#    prometheus_data: {}
-#    grafana_data: {}
+
 
 networks:
-  front-tier:
   back-tier:
 
 configs:
@@ -41,9 +38,7 @@ services:
         target: /etc/grafana/provisioning/datasources/datasource.yml
         uid: '472'
  
-#    volumes:
-#      - grafana_data:/var/lib/grafana
-#      - ./grafana/provisioning/:/etc/grafana/provisioning/
+
     env_file:
       - ./grafana/config.monitoring
     networks:
@@ -68,29 +63,17 @@ services:
         target: /etc/prometheus/prometheus.yml
       - source: alert.rules
         target: /etc/prometheus/alert.rules
-#    volumes:
-#      - ./prometheus/:/etc/prometheus/
-#      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-#      - '--web.console.templates=/usr/share/prometheus/consoles'
+
     ports:
       - 9090:9090
-    links:
-      - cadvisor:cadvisor
-      - alertmanager:alertmanager
-    depends_on:
-      - cadvisor
     networks:
       - back-tier
     restart: always
     deploy:
        replicas: 2
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
 
   node-exporter:
     image: prom/node-exporter
@@ -112,37 +95,33 @@ services:
       mode: global
 
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.15.0-rc.2
     ports:
       - 9093:9093
     configs:
       - source: config.yml
         target: /etc/alertmanager/config.yml
-#    volumes:
-#      - ./alertmanager/:/etc/alertmanager/
     networks:
       - back-tier
     restart: always
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-      - '--mesh.peer=alertmanager2:6783'
+      - '--cluster.peer=alertmanager2:9094'
   alertmanager2:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.15.0-rc.2
     ports:
       - 9094:9093
     configs:
       - source: config.yml
         target: /etc/alertmanager/config.yml
-#    volumes:
-#      - ./alertmanager/:/etc/alertmanager/
     networks:
       - back-tier
     restart: always
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-      - '--mesh.peer=alertmanager:6783'
+      - '--cluster.peer=alertmanager:9094'
   cadvisor:
     image: google/cadvisor
     volumes:
