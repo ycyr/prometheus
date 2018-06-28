@@ -135,3 +135,34 @@ services:
     restart: always
     deploy:
       mode: global
+elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.2.4
+    networks:
+      - back-tier
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      ES_NODE_NAME: elasticsearch
+      ELASTIC_PASSWORD: MagicWord
+      discovery.type: single-node
+
+  ui-cerebro:
+    image: ludekvesely/elasticsearch-cerebro
+    networks:
+      - back-tier
+    ports:
+      - '9001:9000'
+    environment:
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    networks:
+      - back-tier
+    ports:
+      - '5601:5601'
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=MagicWord
