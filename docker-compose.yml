@@ -75,7 +75,7 @@ services:
        replicas: 2
 
   node-exporter:
-    image: prom/node-exporter
+    image: prom/node-exporter:v0.15.2
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -94,7 +94,7 @@ services:
       mode: global
 
   alertmanager:
-    image: prom/alertmanager:v0.15.0-rc.2
+    image: prom/alertmanager:v0.15.0
     ports:
       - 9093:9093
     configs:
@@ -108,7 +108,7 @@ services:
       - '--storage.path=/alertmanager'
       - '--cluster.peer=alertmanager2:9094'
   alertmanager2:
-    image: prom/alertmanager:v0.15.0-rc.2
+    image: prom/alertmanager:v0.15.0
     ports:
       - 9094:9093
     configs:
