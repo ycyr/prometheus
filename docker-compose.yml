@@ -75,7 +75,7 @@ services:
        replicas: 2
 
   node-exporter:
-    image: prom/node-exporter:v0.15.2
+    image: prom/node-exporter
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
